@@ -1,15 +1,20 @@
 import React, {useState} from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from "../App.js";
 
 const Login = () => {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [err, setError] = useState(false);
+  const { setLogged } = useAuth();
+  const [isSubmitting, setSubmitting] = useState(true);
+  const [blockError, setBlock] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async(e) => {
+    setSubmitting(true)
     e.preventDefault();
     const dat = {
       login,
@@ -17,9 +22,13 @@ const Login = () => {
     }
     const response = await axios.post('http://localhost:3000/login', dat);
     if (response.data.message === 'true') {
-      navigate('/table')
+      setLogged(true)
+      navigate('/table', {state: {username: login}})
     } else {
-      setError(true)
+      setLogin('');
+      setPassword('');
+      setBlock(true);
+      setError(true);
     }
   }
 
@@ -28,8 +37,10 @@ const Login = () => {
   }
 
   const handlePassword = (event) => {
+    setSubmitting(false)
     setPassword(event.target.value)
   }
+
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
       <div className="login-container bg-white p-4 rounded shadow-lg" style={{ width: '500px', height: '500px' }}>
@@ -41,9 +52,14 @@ const Login = () => {
             <label htmlFor="password" className="fw-bold mb-2 mt-2">Enter password:</label>
             <input type="password" className="form-control w-100 pt-2" id="password" placeholder="qwerty12345" value={password} onChange={handlePassword} required/>
           </div>
-          {err && <p className="text-danger">Incorrect username or password</p>}
+          {err && <p className="text-danger mb-0">Incorrect username or password.</p>}
+          {blockError && (
+            <p className="text-danger">
+            You are in block.
+          </p>
+          )}
         <div className="d-flex justify-content-between mt-4 flex-row gap-2">
-          <button type="submit" className="btn btn-primary w-100">Sign in</button>
+          <button type="submit" disabled={isSubmitting} className="btn btn-primary w-100">Sign in</button>
           <button type="button" onClick={() => navigate('/registration')} className="btn btn-primary w-100">Sign Up</button>
         </div>
         </form>

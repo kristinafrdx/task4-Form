@@ -2,28 +2,39 @@ import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import _ from 'lodash';
+import _ from "lodash";
+import { useAuth } from "../App.js";
 
 const Registration = () => {
   const [name, setName] = useState("");
   const [login, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [err, setError] = useState(false);
+  const { setLogged } = useAuth();
+  const [isSubmitting, setSubmitting] = useState(true);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
+    setSubmitting(true);
     e.preventDefault();
-    const dat = {
+    const dataUser = {
       name,
       login,
       password,
     };
-// {
-//       mode: "cors",
-//       credentials: "include",
-//     }
-    await axios.post("http://localhost:3000/registration", dat);
-    navigate("/table");
+    const response = await axios.post(
+      "http://localhost:3000/registration",
+      dataUser
+    );
+    if (response.data.message === false) {
+      setError(true);
+      setEmail("");
+      setPassword("");
+    } else {
+      setLogged(true);
+      navigate("/table", { state: { username: login } });
+    }
   };
 
   const handleName = (event) => {
@@ -35,6 +46,7 @@ const Registration = () => {
   };
 
   const handlePassword = (event) => {
+    setSubmitting(false);
     setPassword(event.target.value);
   };
 
@@ -46,7 +58,7 @@ const Registration = () => {
       >
         <h2 className="text-center mb-4 fs-5 mt-5 upper">Sign Up</h2>
         <form className="p-4 pt-2" onSubmit={handleSubmit}>
-          <div className="form-group mb-4">
+          <div className="form-group mb-3">
             <label htmlFor="username" className="fw-bold mb-2">
               Your name:
             </label>
@@ -85,10 +97,16 @@ const Registration = () => {
               required
             />
           </div>
+          {err && (
+            <p className="text-danger">
+              That email is already taken. Try enother.
+            </p>
+          )}
           <div className="d-flex justify-content-between mt-4 flex-row gap-2">
             <button
               type="submit"
               className="btn btn-primary w-100"
+              disabled={isSubmitting}
             >
               Sign Up
             </button>
