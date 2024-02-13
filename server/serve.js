@@ -19,10 +19,17 @@ app.post('/login', async (req, res) => {
   const user = req.body;
   const existUser = await isExistUser(user.login, user.password);
   const blockCh = await checkBlock(user.login, 'blocked');
-  if (existUser && blockCh.length < 1) {
-    res.json({ message: 'true' });
+  if (existUser) {
+    if (blockCh.length < 1) {
+    res.json({ message: 'OK' });
+    res.end();
+    } else {
+      res.json({ message: 'block'});
+      res.end();
+    }
   } else {
-    res.json({message: 'false' });
+    res.json({message: 'notExist' });
+    res.end()
   }
 })
 
@@ -32,6 +39,7 @@ app.post('/registration', async (req, res) => {
   const check = await checkLogin(currentLogin);
   if (check.length > 0) {
     res.json({ message: false})
+    res.end()
   } else {
     res.json({ message: true})
     await createUser(newUser.name, newUser.login, status.active, newUser.password);
@@ -44,6 +52,7 @@ app.post('/table/delete', async (req, res) => {
   const id = users.map((el) => el.id)
   const update = await deleteAll(id);
   res.send(update);
+  res.end()
 })
 
 app.post('/table/block', async (req, res) => {
@@ -51,6 +60,7 @@ app.post('/table/block', async (req, res) => {
   const idUsers = users.map((el) => Number(el.id));
   const update = await blockAndUnblockUsers('blocked', idUsers);
   res.send(update);
+  res.end()
 })
 
 app.post('/table/unlock', async (req, res) => {
@@ -58,6 +68,7 @@ app.post('/table/unlock', async (req, res) => {
   const idUsers = users.map((el) => Number(el.id));
   const update = await blockAndUnblockUsers('active', idUsers);
   res.send(update);
+  res.end()
 })
 
 app.listen(PORT, () => {

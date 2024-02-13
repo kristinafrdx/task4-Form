@@ -40,23 +40,37 @@ const Table = () => {
   };
 
   const selectedUsers = users.filter((use) => use.isChecked);
-  
+  const selectCurrent = selectedUsers.map((el) => el.login === username);
+
   const handleDelete = async () => {
     if (selectedUsers.length > 0) {
-      await axios.post("http://localhost:3000/table/delete", selectedUsers);
-      const updateUsers = await axios.get("http://localhost:3000/users");
-      setUsers(updateUsers.data.reverse());
+      if (selectCurrent) {
+        await axios.post("http://localhost:3000/table/delete", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3000/users");
+        setUsers(updateUsers.data.reverse());
+        navigate('/login');
+      } else {
+        await axios.post("http://localhost:3000/table/delete", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3000/users");
+        setUsers(updateUsers.data.reverse());
+      }
     } else {
       setError(true);
     }
   };
 
   const blockUser = async () => {
-    console.log(selectedUsers)
     if (selectedUsers.length > 0) {
-      await axios.post("http://localhost:3000/table/block", selectedUsers);
+      if (selectCurrent) {
+        await axios.post("http://localhost:3000/table/block", selectedUsers);
       const updateUsers = await axios.get("http://localhost:3000/users");
       setUsers(updateUsers.data.reverse());
+      navigate('/login')
+      } else {
+        await axios.post("http://localhost:3000/table/delete", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3000/users");
+        setUsers(updateUsers.data.reverse());
+      }
     } else {
       setError(true);
     }
