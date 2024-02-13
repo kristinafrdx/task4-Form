@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "cd frontend && npm start",
-    "serve": "cd server && nodemon ./serve.js"
+    "serve": "cd server && nodemon ./serve.js",
+    "heroku-postbuild": "cd frontend && npm install && npm install react-scripts && npm run build"    
   },
   "author": "",
   "license": "ISC"
