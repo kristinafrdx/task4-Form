@@ -3,7 +3,7 @@ import cors from 'cors';
 import { getUsers, createUser, isExistUser, deleteAll, blockAndUnblockUsers, checkLogin, checkBlock } from './database.js'
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 
 app.use(cors());
 app.use(express.json());
@@ -41,7 +41,7 @@ app.post('/registration', async (req, res) => {
     res.end();
   } else {
     res.json({ message: true});
-    await createUser(newUser.name, newUser.login, status.active, newUser.password);
+    await createUser(newUser.name, newUser.login, 'active', newUser.password);
     res.end();
   }
 });

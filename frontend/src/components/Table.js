@@ -16,7 +16,7 @@ const Table = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get("http://localhost:3000/users");
+      const response = await axios.get("http://localhost:3030/users");
       setUsers(response.data.reverse());
     };
     fetchData();
@@ -41,17 +41,17 @@ const Table = () => {
 
   const selectedUsers = users.filter((use) => use.isChecked);
   const selectCurrent = selectedUsers.find((el) => el.login === username);
-
+  console.log(selectCurrent)
   const handleDelete = async () => {
     if (selectedUsers.length > 0) {
       if (selectCurrent) {
-        await axios.post("http://localhost:3000/table/delete", selectedUsers);
-        const updateUsers = await axios.get("http://localhost:3000/users");
+        await axios.post("http://localhost:3030/table/delete", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3030/users");
         setUsers(updateUsers.data.reverse());
         navigate('/login');
       } else {
-        await axios.post("http://localhost:3000/table/delete", selectedUsers);
-        const updateUsers = await axios.get("http://localhost:3000/users");
+        await axios.post("http://localhost:3030/table/delete", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3030/users");
         setUsers(updateUsers.data.reverse());
       }
     } else {
@@ -63,13 +63,13 @@ const Table = () => {
     if (selectedUsers.length > 0) {
       console.log(selectCurrent)
       if (selectCurrent) {
-        await axios.post("http://localhost:3000/table/block", selectedUsers);
-        const updateUsers = await axios.get("http://localhost:3000/users");
+        await axios.post("http://localhost:3030/table/block", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3030/users");
         setUsers(updateUsers.data.reverse());
         navigate('/login');
       } else {
-        await axios.post("http://localhost:3000/table/block", selectedUsers);
-        const updateUsers = await axios.get("http://localhost:3000/users");
+        await axios.post("http://localhost:3030/table/block", selectedUsers);
+        const updateUsers = await axios.get("http://localhost:3030/users");
         setUsers(updateUsers.data.reverse());
       }
     } else {
@@ -79,8 +79,8 @@ const Table = () => {
 
   const unLockUser = async () => {
     if (selectedUsers.length > 0) {
-      await axios.post("http://localhost:3000/table/unlock", selectedUsers);
-      const updateUsers = await axios.get("http://localhost:3000/users");
+      await axios.post("http://localhost:3030/table/unlock", selectedUsers);
+      const updateUsers = await axios.get("http://localhost:3030/users");
       setUsers(updateUsers.data.reverse());
     } else {
       setError(true);

@@ -20,7 +20,7 @@ const Login = () => {
       login,
       password,
     }
-    const response = await axios.post('http://localhost:3000/login', dat);
+    const response = await axios.post('http://localhost:3030/login', dat);
     if (response.data.message === 'OK') {
       setLogged(true)
       navigate('/table', {state: {username: login}})
@@ -28,6 +28,7 @@ const Login = () => {
       setLogin('');
       setPassword('');
       setBlock(true);
+      setError(false)
     } else {
       setError(true);
     }
