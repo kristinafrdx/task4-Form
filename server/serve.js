@@ -1,7 +1,6 @@
 import express from "express";
-import path from 'path';
 import cors from 'cors';
-import { getUsers, status, createUser, isExistUser, deleteAll, blockAndUnblockUsers, checkLogin, checkBlock } from './database.js'
+import { getUsers, createUser, isExistUser, deleteAll, blockAndUnblockUsers, checkLogin, checkBlock } from './database.js'
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +11,7 @@ app.use(express.json());
 app.get('/users', async (req, res) => {
   const users = await getUsers();
   res.send(users);
-  res.end()
+  res.end();
 })
 
 app.post('/login', async (req, res) => {
@@ -29,48 +28,50 @@ app.post('/login', async (req, res) => {
     }
   } else {
     res.json({message: 'notExist' });
-    res.end()
+    res.end();
   }
-})
+});
 
 app.post('/registration', async (req, res) => {
   const newUser = req.body;
   const currentLogin = newUser.login;
   const check = await checkLogin(currentLogin);
   if (check.length > 0) {
-    res.json({ message: false})
-    res.end()
+    res.json({ message: false});
+    res.end();
   } else {
-    res.json({ message: true})
+    res.json({ message: true});
     await createUser(newUser.name, newUser.login, status.active, newUser.password);
     res.end();
   }
 });
 
 app.post('/table/delete', async (req, res) => {
-  const users = req.body
-  const id = users.map((el) => el.id)
+  const users = req.body;
+  const id = users.map((el) => el.id);
   const update = await deleteAll(id);
   res.send(update);
-  res.end()
-})
+  res.end();
+});
 
 app.post('/table/block', async (req, res) => {
   const users = req.body;
   const idUsers = users.map((el) => Number(el.id));
-  const update = await blockAndUnblockUsers('blocked', idUsers);
+  await blockAndUnblockUsers('blocked', idUsers);
+  const update = getUsers();
   res.send(update);
-  res.end()
-})
+  res.end();
+});
 
 app.post('/table/unlock', async (req, res) => {
   const users = req.body;
   const idUsers = users.map((el) => Number(el.id));
-  const update = await blockAndUnblockUsers('active', idUsers);
+  await blockAndUnblockUsers('active', idUsers);
+  const update = getUsers();
   res.send(update);
-  res.end()
-})
+  res.end();
+});
 
 app.listen(PORT, () => {
-  console.log(`server is running on: http://localhost:${PORT}`)
-})
+  console.log(`server is running on: http://localhost:${PORT}`);
+});

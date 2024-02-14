@@ -7,15 +7,9 @@ const pool = mysql.createPool({
   database: 'usersTable',
 }).promise()
 
-export const status = {
-  active: 'active',
-  blocked: 'blocked',
-  deleted: 'deleted',
-}
-
 export const isExistUser = async (login, password) => {
-  const [result] = await pool.query(`
-  SELECT * 
+  const [result] = await pool.query(
+  `SELECT * 
   FROM users
   WHERE login = ?
   AND password = ?`,
@@ -24,7 +18,7 @@ export const isExistUser = async (login, password) => {
 }
 
 export const getUsers = async () => {
-  const [data] = await pool.query("SELECT * FROM users");
+  const [data] = await pool.query(`SELECT * FROM users`);
   return data;
 } 
 
@@ -38,23 +32,23 @@ export const getUser = async (id) => {
 }
 
 export const createUser = async (name, login, status, password) => {
-  const [newUser] = await pool.query(`
-  INSERT INTO users (name, login, status, password)
-  VALUES (?, ?, ?, ?)
-  `, [name, login, status, password])
+  const [newUser] = await pool.query(
+   `INSERT INTO users (name, login, status, password)
+  VALUES (?, ?, ?, ?)`,
+   [name, login, status, password])
   return newUser;
 }
 
 export const deleteUser = async (id) => {
-    await pool.query(`
-      DELETE FROM users
+    await pool.query(
+      `DELETE FROM users
       WHERE id = ?`,
       [id])
     return deleted;
 }
 export const deleteAll = async (users) => {
-    await pool.query(`
-    DELETE FROM users
+    await pool.query(
+    `DELETE FROM users
     WHERE id IN (?)`
     , [users]);
     return await getUsers();
@@ -62,12 +56,12 @@ export const deleteAll = async (users) => {
 
 export const blockAndUnblockUsers = async (status, usersId) => {
     for (const item of usersId) {
-      await pool.execute(`
-    UPDATE users SET status = ?
-    WHERE id IN (?)`
-    , [status, item]);
+      await pool.execute(
+    `UPDATE users SET status = ?
+    WHERE id IN (?)`, 
+    [status, item]);
     }
-    return await getUsers();
+    return;
 }
 
 export const checkLogin = async (login) => {
